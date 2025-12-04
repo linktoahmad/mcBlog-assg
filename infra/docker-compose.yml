@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: blogAppDb
+      POSTGRES_USER: blogAppUser
+      POSTGRES_PASSWORD: blogPass321
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U blogAppUser -d blogAppDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ../backend   
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgres://blogAppUser:blogPass321@postgres:5432/blogAppDb
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../backend:/app
+      - /app/node_modules
+
+  frontend:
+    build: ../frontend         
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: "http://localhost:3001" 
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
