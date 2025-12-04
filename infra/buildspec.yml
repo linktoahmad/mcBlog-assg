@@ -10,27 +10,27 @@ env:
 phases:
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
+      - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-      - echo Build started on `date`
+      - echo "Build started on `date`"
 
   build:
     commands:
-      - echo Building frontend...
+      - echo "Building frontend..."
       - docker build -t $FRONTEND_REPO ./frontend
-      - docker tag $FRONTEND_REPO:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$FRONTEND_REPO:latest
+      - "docker tag $FRONTEND_REPO:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$FRONTEND_REPO:latest"
 
-      - echo Building backend...
+      - echo "Building backend..."
       - docker build -t $BACKEND_REPO ./backend
-      - docker tag $BACKEND_REPO:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$BACKEND_REPO:latest
+      - "docker tag $BACKEND_REPO:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$BACKEND_REPO:latest"
 
-      - echo Pushing frontend...
+      - echo "Pushing frontend..."
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$FRONTEND_REPO:latest
 
-      - echo Pushing backend...
+      - echo "Pushing backend..."
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$BACKEND_REPO:latest
 
-      - echo Build completed on `date`
+      - echo "Build completed on `date`"
 
   post_build:
     commands:
