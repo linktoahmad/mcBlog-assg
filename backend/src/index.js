@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const { sequelize, Article } = require('./config/database');
 const articlesRouter = require('./routes/articles');
 const { generateArticle } = require('./services/articleService');
@@ -6,6 +7,7 @@ const { scheduleDailyArticleGeneration } = require('./services/articleJob');
 require('dotenv').config()
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // Routes
