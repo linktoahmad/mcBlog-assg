@@ -6,7 +6,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          hello there world - in React!
+          HELLO WORLD
         </p>
       </header>
     </div>
