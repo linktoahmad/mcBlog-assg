@@ -1,6 +1,6 @@
 #!/bin/bash
 ACCOUNT_ID="708895070110"
-REGION="us-east-1"
+REGION="ap-southeast-1"
 
 echo "🚀 Deploying mcblog-fe & mcblog-be to EC2..."
 # Login to ECR
