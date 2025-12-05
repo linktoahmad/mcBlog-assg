@@ -32,6 +32,7 @@ const generateArticle = async () => {
 const getArticles = async (page = 1, limit = 10) => {
   const offset = (page - 1) * limit;
   return await Article.findAndCountAll({
+    attributes: ['id', 'title', 'summary', 'publishDate'],
     order: [['publishDate', 'DESC']],
     limit,
     offset
