@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.get('/api/test', async (req, res) => {
     try {
-        res.json({ message: "hello world in node" });
+        res.json({ message: "hello there world in node" });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
