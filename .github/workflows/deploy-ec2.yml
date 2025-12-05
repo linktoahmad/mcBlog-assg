@@ -1,14 +1,22 @@
-name: Deploy to EC2
+name: Full Auto Deploy (CodeBuild + EC2)
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  deploy:
+  trigger-codebuild:
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy to EC2
+    - name: Trigger CodeBuild
+      run: |
+        echo "CodeBuild triggered via webhook - check AWS Console"
+
+  deploy-ec2:
+    needs: trigger-codebuild
+    runs-on: ubuntu-latest
+    steps:
+    - name: Wait for CodeBuild + Deploy EC2
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: 13.60.183.195
