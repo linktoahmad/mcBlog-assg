@@ -69,8 +69,7 @@ const Home = () => {
                                 Make new blog
                                 <span>&rarr;</span>
                             </button>
-                        </div>}
-                >
+                        </div>}>
                     {articles.map((article, index) => (
                         <div className="blog-list" onClick={() => handleArticleClick(article)}>
                             <BlogCard
