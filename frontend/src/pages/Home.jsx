@@ -46,7 +46,7 @@ const Home = () => {
         <section className="blog-section">
             <div className="blog-intro">
                 <p className="blog-header">Bloggy - McBlog</p>
-                <h2 className="blog-title">How you doin..</h2>
+                <h2 className="blog-title">How you doin...</h2>
                 <p className="blog-description">
                     Read the blogs written by cranker. <br />
                     Infite scoll so you dont have to manually move to next page,
