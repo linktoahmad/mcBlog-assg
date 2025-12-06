@@ -1,30 +1,72 @@
 #!/bin/bash
-set -e
+
+# ==============================
+# mcblog Deployment Script
+# ==============================
 
 ACCOUNT_ID="708895070110"
 REGION="ap-southeast-1"
-COMPOSE_FILE_PATH="/home/ec2-user/mc-blog/infra/docker-compose.yml"
+EC2_HOST="13.60.183.195"
 
 echo "🚀 Deploying mcblog-fe & mcblog-be to EC2..."
 
 # Login to ECR
-echo "🔐 Logging in to ECR..."
-aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
-echo "✅ ECR login successful!"
+aws ecr get-login-password --region $REGION \
+  | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
 
-# Pull the latest images
-echo "🔄 Pulling latest images from ECR..."
-docker-compose -f $COMPOSE_FILE_PATH pull
-echo "✅ Images pulled successfully!"
+# Stop old containers
+echo "Stopping old containers..."
+docker stop mcblog-frontend mcblog-backend postgres || true
+docker rm mcblog-frontend mcblog-backend postgres || true
 
-# Stop and restart services
-echo "🚀 Starting services with docker-compose..."
-docker-compose -f $COMPOSE_FILE_PATH up -d --remove-orphans
-echo "✅ Deployment complete!"
+# Ensure persistent volume
+echo "Ensuring persistent volume..."
+docker volume create postgres_data || true
 
-echo "Cleaning up dangling images..."
-docker image prune -f
+# Start Postgres
+echo "Starting Postgres..."
+docker run -d --name postgres \
+  -e POSTGRES_DB=blogAppDb \
+  -e POSTGRES_USER=blogAppUser \
+  -e POSTGRES_PASSWORD=blogPass321 \
+  -p 5432:5432 \
+  --mount source=postgres_data,target=/var/lib/postgresql/data \
+  postgres:16-alpine
 
-echo "✅ Deployment successful!"
-echo "🌐 Frontend available at http://<your-ec2-instance-public-ip>:3000"
-echo "🔧 Backend available at http://<your-ec2-instance-public-ip>:3001"
+# Wait for Postgres to be ready
+echo "Waiting for Postgres..."
+until docker exec postgres pg_isready -U blogAppUser -d blogAppDb; do
+  echo "Postgres not ready yet..."
+  sleep 2
+done
+echo "✅ Postgres ready!"
+
+# Pull latest images from ECR
+echo "Pulling latest images from ECR..."
+docker pull $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/mcblog-be:latest
+docker pull $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/mcblog-fe:latest
+
+# Start Backend
+echo "Starting Backend..."
+docker run -d --name mcblog-backend \
+  -e DATABASE_URL="postgres://blogAppUser:blogPass321@$EC2_HOST:5432/blogAppDb" \
+  -e NODE_ENV=production \
+  -p 3001:3001 \
+  $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/mcblog-be:latest
+
+# Start Frontend
+echo "Starting Frontend..."
+docker run -d --name mcblog-frontend \
+  -e REACT_APP_API_URL="http://$EC2_HOST:3001" \
+  -p 3000:3000 \
+  $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/mcblog-fe:latest
+
+# Done
+echo "✅ Deployment Completed Successfully!"
+echo "Frontend: http://$EC2_HOST:3000"
+echo "Backend: http://$EC2_HOST:3001"
+echo "Postgres: localhost:5432"
+
+# List running containers
+echo "Checking running containers..."
+docker ps
