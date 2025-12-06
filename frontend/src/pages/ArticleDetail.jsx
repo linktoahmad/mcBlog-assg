@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { getArticleById } from '../api/client';
 import Spinner from '../components/ui/Spinner';
 import { formatDate } from '../lib/date';
+import { Link } from 'react-router-dom';
 import './ArticleDetail.css';
 
 const ArticleDetail = () => {
@@ -43,6 +44,7 @@ const ArticleDetail = () => {
     return (
         <div className="article-container">
             <div className="article-header">
+                <Link className="blog-header " to="/">Bloggy - McBlog</Link>
                 <h1>{article.title}</h1>
                 <span className='card-date'>Published on: {formatDate(article.publishDate)}</span>
             </div>

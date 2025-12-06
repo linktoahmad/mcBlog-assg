@@ -4,7 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { getArticles, generateArticle } from '../api/client';
 import BlogCard from "../components/Blog/BlogCard";
 import './Home.css';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Spinner from '../components/ui/Spinner';
 
 const Home = () => {
@@ -45,7 +45,7 @@ const Home = () => {
     return (
         <section className="blog-section">
             <div className="blog-intro">
-                <p className="blog-header">Bloggy - McBlog</p>
+                <Link className="blog-header " to="/">Bloggy - McBlog</Link>
                 <h2 className="blog-title">How you doin...</h2>
                 <p className="blog-description">
                     Read the blogs written by cranker. <br />
