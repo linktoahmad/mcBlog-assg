@@ -1,0 +1,30 @@
+.not-found-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  font-family: 'sans-serif';
+}
+
+.not-found-container h1 {
+  font-size: 4rem;
+  margin: 0;
+}
+
+.not-found-container p {
+  font-size: 1.2rem;
+}
+
+.not-found-container .home-link {
+  margin-top: 1rem;
+  text-decoration: none;
+  color: #22a6b3;
+  font-weight: bold;
+}
+
+.gif{
+  border-radius: 50%;
+  width: 50px;
+}
