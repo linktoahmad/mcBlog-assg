@@ -1,8 +1,8 @@
 // Page to display blog articles
 import { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { getArticles, generateArticle } from '../../api/articlesApi';
-import BlogCard from "../../components/blog/BlogCard";
+import { getArticles } from '../../api/articlesApi';
+import BlogCard from "../../components/blogCard/BlogCard";
 import { useNavigate } from 'react-router-dom';
 import BlogButton from '../blogButton/BlogButton';
 import Spinner from '../../components/ui/Spinner';
