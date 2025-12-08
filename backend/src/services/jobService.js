@@ -3,7 +3,7 @@ import { QueryTypes } from 'sequelize';
 
 export const getJobs = async () => {
   try {
-    const jobs = await sequelize.query('SELECT * FROM pgboss.job', { type: QueryTypes.SELECT });
+    const jobs = await sequelize.query('SELECT * FROM pgboss.job WHERE name = \'generate-article\'', { type: QueryTypes.SELECT });
     return jobs;
   } catch (error) {
     console.error('Error fetching jobs:', error);

@@ -53,7 +53,10 @@
 .blog-cta:hover {
   background-color: #e5e7eb;
 }
-
+.blog-cta:disabled {
+  background-color: #dbc1df;
+  color: #747a80;
+}
 .blog-cta span {
   font-size: 1.25rem;
 }
