@@ -1,0 +1,39 @@
+# stored in CodeBuild
+version: 0.2
+
+env:
+  variables:
+    AWS_ACCOUNT_ID: "account_id_here"
+    AWS_REGION: "ap-southeast-1"
+    FRONTEND_REPO: "mcblog-fe"
+    BACKEND_REPO: "mcblog-be"
+    EC2_HOST: "host ip or url"
+
+phases:
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      - echo "Build started on `date`"
+
+  build:
+    commands:
+      - echo "Building frontend for EC2 $EC2_HOST..."
+      - docker build --build-arg REACT_APP_API_URL=http://$EC2_HOST:3001 -t $FRONTEND_REPO ./frontend
+      - docker tag $FRONTEND_REPO:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$FRONTEND_REPO:latest
+
+      - echo "Building backend..."
+      - docker build -t $BACKEND_REPO ./backend
+      - docker tag $BACKEND_REPO:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$BACKEND_REPO:latest
+
+      - echo "Pushing images..."
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$FRONTEND_REPO:latest
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$BACKEND_REPO:latest
+
+      - echo "Build completed on `date`"
+
+  post_build:
+    commands:
+      - echo "Images pushed to ECR!"
+      - echo "Frontend- $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$FRONTEND_REPO:latest"
+      - echo "Backend- $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$BACKEND_REPO:latest"
