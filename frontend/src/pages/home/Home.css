@@ -58,6 +58,11 @@
   font-size: 1.25rem;
 }
 
+.job-link {
+  text-decoration: underline;
+  color: #81a3da;
+}
+
 .blog-list {
   flex: 2;
   display: flex;

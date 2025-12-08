@@ -13,6 +13,8 @@ const Home = () => {
                     Read the blogs written by cranker. <br />
                     Infite scoll so you dont have to manually move to next page,
                     and when you get bored of reading click the button to generate new a blog.
+                    View jobs here: {' '}
+                    <Link className='job-link' to="/jobs">Jobs</Link>
                 </p>
                <BlogButton />
             </div>

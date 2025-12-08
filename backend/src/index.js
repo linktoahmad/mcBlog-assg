@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { sequelize, Article } from './config/database.js';
 import articlesRouter from './routes/articlesRoutes.js';
+import jobsRoutes from './routes/jobsRoutes.js';
 import boss from './config/queue.js';
 import { scheduleDailyArticleGeneration } from './services/articleJob.js';
 import { generateArticleJob } from './workers/articleWorker.js';
@@ -20,6 +21,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/articles', articlesRouter);
+app.use('/api/jobs', jobsRoutes);
 app.get('/api/health', async (req, res) => {
   try {
     const count = await Article.count();
