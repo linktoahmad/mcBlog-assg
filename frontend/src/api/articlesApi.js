@@ -1,5 +1,3 @@
-// API client for interacting with the backend
-
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 const API_URL = `${API_BASE_URL}/api/articles`;
 
@@ -19,9 +17,13 @@ export const getArticleById = async (id) => {
     return response.json();
 };
 
-export const generateArticle = async () => {
+export const generateArticle = async (topic) => {
     const response = await fetch(`${API_URL}/generate`, {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ topic }),
     });
     if (!response.ok) {
         throw new Error('Failed to generate article');

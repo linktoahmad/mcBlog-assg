@@ -1,10 +1,11 @@
 // Component to display full article content
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getArticleById } from '../api/client';
-import Spinner from '../components/ui/Spinner';
-import { formatDate } from '../lib/date';
+import { getArticleById } from '../../api/articlesApi';
+import Spinner from '../../components/ui/Spinner';
+import { formatDate } from '../../lib/date';
 import { Link } from 'react-router-dom';
+import placeholderImage from '../../assets/placeholder.jpg';
 import './ArticleDetail.css';
 
 const ArticleDetail = () => {
@@ -49,6 +50,7 @@ const ArticleDetail = () => {
                 <span className='card-date'>Published on: {formatDate(article.publishDate)}</span>
             </div>
             <div className="article-content">{article.content}</div>
+            <img className="article-image" src={article.image ? article.image : placeholderImage} alt={article.title} />
         </div>
     );
 };
