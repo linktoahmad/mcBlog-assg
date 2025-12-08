@@ -11,6 +11,7 @@ const genAI = new GoogleGenAI({
 const generateArticleJob = async (job) => {
   const { topic } = job.data;
   try {
+    console.log(job.id, new Date(),'Generating article');
     const articleData = await generateArticleFromTopic(topic);
     const imagePrompt = articleData.image_prompt || 'A generic blog image';
     const image = await generateImageFromPrompt(imagePrompt);
