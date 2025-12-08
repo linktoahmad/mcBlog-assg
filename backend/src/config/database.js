@@ -1,6 +1,6 @@
-const { Sequelize } = require('sequelize');
-const ArticleModel = require('../models/Article');
-require('dotenv').config()
+import { Sequelize } from 'sequelize';
+import ArticleModel from '../models/Article.js';
+import 'dotenv/config';
 
 let sequelize;
 
@@ -17,4 +17,4 @@ sequelize = new Sequelize(process.env.DATABASE_URL, {
 
 const Article = ArticleModel(sequelize);
 
-module.exports = { sequelize, Article };
+export { sequelize, Article };

@@ -1,6 +1,6 @@
-const { DataTypes } = require('sequelize');
+import { DataTypes } from 'sequelize';
 
-module.exports = (sequelize) => {
+export default (sequelize) => {
   const Article = sequelize.define('Article', {
     id: {
       type: DataTypes.INTEGER,
@@ -16,7 +16,12 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     summary: {
-      type: DataTypes.STRING(150)
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    image: {
+      type: DataTypes.TEXT,
+      allowNull: true
     },
     publishDate: {
       type: DataTypes.DATE,

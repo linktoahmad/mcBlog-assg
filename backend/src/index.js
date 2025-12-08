@@ -1,14 +1,22 @@
-const express = require('express');
-const cors = require('cors');
-const { sequelize, Article } = require('./config/database');
-const articlesRouter = require('./routes/articles');
-const { generateArticle } = require('./services/articleService');
-const { scheduleDailyArticleGeneration } = require('./services/articleJob');
-require('dotenv').config()
+import express from 'express';
+import cors from 'cors';
+import { sequelize, Article } from './config/database.js';
+import articlesRouter from './routes/articlesRoutes.js';
+import boss from './config/queue.js';
+import { scheduleDailyArticleGeneration } from './services/articleJob.js';
+import { generateArticleJob } from './workers/articleWorker.js';
+import { handleError } from './utils/errorHandler.js';
+import 'dotenv/config';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// console every request
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
 // Routes
 app.use('/api/articles', articlesRouter);
@@ -29,16 +37,6 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// Seed on startup
-const seedArticles = async () => {
-  const count = await Article.count();
-  if (count === 0) {
-    console.log('Seeding initial articles...');
-    await generateArticle();
-    await generateArticle();
-    await generateArticle();
-  }
-};
 
 // Start server
 const startServer = async () => {
@@ -47,13 +45,19 @@ const startServer = async () => {
     console.log('Database connection has been established successfully.');
     await sequelize.sync({ alter: true }); // Use migrations in production
     console.log('Database synchronized.');
-    await seedArticles();
-    scheduleDailyArticleGeneration();
+    await boss.start();
+    console.log('PG Boss started');
+    boss.work('generate-article', generateArticleJob);
+    console.log('PG Boss worker registered for generate-article');
+    // Schedule cron jobs
+    await scheduleDailyArticleGeneration();
+    console.log('PG Boss cron job scheduler running');
+    
     app.listen(process.env.PORT || 3001, () => {
       console.log(`Server running on port ${process.env.PORT || 3001}`);
     });
   } catch (error) {
-    console.error('Startup failed:', error);
+    handleError(error, 'Startup');
   }
 };
 
