@@ -40,28 +40,29 @@ const BlogList = () => {
     return (
 
         <div className="blog-list">
-                <InfiniteScroll
-                    dataLength={articles.length}
-                    next={() => fetchArticles()}
-                    hasMore={hasMore}
-                    loader={<Spinner />}
-                    endMessage={
-                        <div className='section-footer'>
-                            <b>Yay! You have seen it all</b>
-                           <BlogButton />
-                        </div>}>
-                    {articles.map((article, index) => (
-                        <div className="blog-list" onClick={() => handleArticleClick(article)}>
-                            <BlogCard
-                                key={index}
-                                summary={article.summary}
-                                date={article.publishDate}
-                                title={article.title}
-                                image={article.image}
-                            />
-                        </div>
-                    ))}
-                </InfiniteScroll>
+            <InfiniteScroll
+                dataLength={articles.length}
+                next={() => fetchArticles()}
+                hasMore={hasMore}
+                loader={<Spinner />}
+                endMessage={
+                    <div className='section-footer'>
+                        <b>Yay! You have seen it all</b>
+                        <BlogButton />
+                    </div>}
+            >
+                {articles.map((article, index) => (
+                    <div className="blog-list" onClick={() => handleArticleClick(article)}>
+                        <BlogCard
+                            key={index}
+                            summary={article.summary}
+                            date={article.publishDate}
+                            title={article.title}
+                            image={article.image}
+                        />
+                    </div>
+                ))}
+            </InfiniteScroll>
         </div>
     );
 };

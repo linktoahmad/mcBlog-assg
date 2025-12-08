@@ -1,0 +1,58 @@
+.blog-button-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between button and tooltip */
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.info-icon {
+    font-weight: bold;
+    cursor: pointer;
+    color: #007bff;
+    font-size: 1.2em;
+    border: 1px solid #007bff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 250px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position the tooltip above the icon */
+    left: 50%;
+    margin-left: -125px; /* Use half of the width (250/2 = 125) to center the tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%; /* At the bottom of the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

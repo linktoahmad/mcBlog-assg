@@ -17,16 +17,24 @@ const BlogButton = () => {
             setButtonText("Error! Try Again");
         } finally {
             setIsLoading(false);
-               setTimeout(() => {
+            setTimeout(() => {
                 setButtonText("Make new blog");
             }, 5000);
         }
     };
 
     return (
-        <button className="blog-cta" onClick={handleGenerate}>
-            {buttonText} <span>&rarr;</span>
-        </button>
+        <div className="blog-button-container">
+            <button className="blog-cta" onClick={handleGenerate}>
+                {buttonText} <span>&rarr;</span>
+            </button>
+            <div className="tooltip">
+                <span className="info-icon">i</span>
+                <span className="tooltiptext">
+                    The Daily blog goes live at 9 AM. New blogs are queued and released as soon as they are cooked.
+                </span>
+            </div>
+        </div>
     );
 };
 
