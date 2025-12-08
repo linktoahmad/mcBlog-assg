@@ -4,7 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { getArticles } from '../../api/articlesApi';
 import BlogCard from "../../components/blogCard/BlogCard";
 import { useNavigate } from 'react-router-dom';
-import BlogButton from '../blogButton/BlogButton';
+// import BlogButton from '../blogButton/BlogButton';
 import Spinner from '../../components/ui/Spinner';
 
 const BlogList = () => {
@@ -48,7 +48,7 @@ const BlogList = () => {
                 endMessage={
                     <div className='section-footer'>
                         <b>Yay! You have seen it all</b>
-                        <BlogButton />
+                        {/* <BlogButton /> */}
                     </div>}
             >
                 {articles.map((article, index) => (
