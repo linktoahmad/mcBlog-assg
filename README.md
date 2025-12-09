@@ -117,7 +117,7 @@ The frontend application has the following pages:
 ![Home Page](docs/assets/home.png)
 
 ### Jobs Board
-![Jobs Board](docs/assets/jobsBoard.png)
+![Jobs Board](docs/assets/jobsBard.png)
 
 ## Getting Started / Local Development
 
@@ -143,7 +143,7 @@ To get started with local development, you will need to have Docker and Docker C
 
     ```bash
     cd infra
-    docker-compose up -d
+    docker compose up --build
     ```
 
 The frontend will be available at `http://localhost:3000` and the backend at `http://localhost:3001`.
