@@ -5,6 +5,7 @@ import articlesRouter from './routes/articlesRoutes.js';
 import jobsRoutes from './routes/jobsRoutes.js';
 import boss from './config/queue.js';
 import { scheduleDailyArticleGeneration } from './services/articleJob.js';
+import { seedInitialArticles } from './services/startupService.js';
 import { generateArticleJob } from './workers/articleWorker.js';
 import { handleError } from './utils/errorHandler.js';
 import 'dotenv/config';
@@ -47,8 +48,13 @@ const startServer = async () => {
     console.log('Database connection has been established successfully.');
     await sequelize.sync({ alter: true }); // Use migrations in production
     console.log('Database synchronized.');
+
     await boss.start();
     console.log('PG Boss started');
+
+    //seed 3 random article on cold start
+    await seedInitialArticles();
+
     boss.work('generate-article', generateArticleJob);
     console.log('PG Boss worker registered for generate-article');
     // Schedule cron jobs

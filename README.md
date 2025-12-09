@@ -80,6 +80,15 @@ This is a full-stack blog application with a React frontend, a Node.js backend, 
 
 - **Docker:** For containerizing the application.
 
+### Local Setup
+
+- Clone the repo
+
+```
+cd ./infra/ 
+docker compose up --build
+```
+
 ### Infrastructure
 
 - **AWS EC2:** The application is deployed on an EC2 instance.
@@ -101,6 +110,14 @@ The frontend application has the following pages:
 - **Article Details (`/article/:id`):** Displays a single article.
 - **Jobs (`/jobs`):** Displays the status of background jobs.
 - **Not Found (`/404`):** A 404 page.
+
+## Screenshots
+
+### Home Page
+![Home Page](docs/assets/home.png)
+
+### Jobs Board
+![Jobs Board](docs/assets/jobsBoard.png)
 
 ## Getting Started / Local Development
 
