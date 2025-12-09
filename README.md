@@ -1,107 +1,137 @@
 # Full Stack Blog Application
 
 This is a full-stack blog application with a React frontend, a Node.js backend, and a PostgreSQL database. The application is containerized using Docker and deployed on AWS.
+## Features
+
+- Modern responsive design react 19
+- Infinite scroll article
+- Jobs board
+- Daily new Ai generated article
+- Make new Ai generated article
+- Jobs queuing
+- Dockerized backend and frontend
+
+## Tech Stack
+
+- **React**  user interface library 
+- **react-infinite-scroll-component**  Efficient article pagination
+- **react-router-dom**  Smooth client-side navigation
+- **Node.js** JavaScript Runtime Environment
+- **Express**  Node.js web application framework 
+- **Axios**  Client for Http
+- **Sequelize**  PostgreSQL ORM 
+- **PostgreSQL**  Database
+- **pg-boss**  Reliable job queue scheduling
+- **@openrouter/ai-sdk-provider** AI text generation (tngtech/deepseek-r1t2-chimera:free)
+- **@google/genai**  generate blog images
+- **Docker** Containerized deployment
+
+### Infrastructure
+
+- **AWS EC2:** The application is deployed on an EC2 instance.
+- **AWS ECR:**- Container registry
+- **AWS CodeBuild:** Used for building the application.
+- **GitHub Actions:** For CI/CD.
+
+
 
 ## File Structure
 
 ```
 .
-├── .github/workflows/deploy-ec2.yml
-├── backend
-│   ├── Dockerfile
-│   ├── package.json
-│   └── src
-│       ├── config
-│       │   ├── database.js
-│       │   └── queue.js
-│       ├── index.js
-│       ├── models
-│       │   └── Article.js
-│       ├── routes
-│       │   ├── articlesRoutes.js
-│       │   └── jobsRoutes.js
-│       ├── services
-│       │   ├── articleJob.js
-│       │   ├── articleService.js
-│       │   └── jobService.js
-│       └── workers
-│           └── articleWorker.js
-├── frontend
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   ├── package.json
-│   └── src
-│       ├── api
-│       │   ├── articlesApi.js
-│       │   └── jobsApi.js
-│       ├── App.js
-│       ├── components
-│       │   ├── blogCard
-│       │   │   └── BlogCard.jsx
-│       │   └── blogList
-│       │       └── BlogList.jsx
-│       └── pages
-│           ├── articleDetails
-│           │   └── ArticleDetail.jsx
-│           ├── home
-│           │   └── Home.jsx
-│           └── jobs
-│               └── Jobs.jsx
-└── infra
-    ├── buildspec.yml
-    ├── docker-compose.yml
-    └── scripts
-        └── deploy.sh
+├── .github/                            # GitHub Actions workflows for CI/CD
+│   └── workflows/                      # Workflow definitions
+│       └── deploy-ec2.yml              # Workflow for deploying to EC2
+├── backend/                            # Node.js backend application
+│   ├── .gitignore                      # Git ignore rules for backend
+│   ├── Dockerfile                      # Dockerfile for the backend service
+│   ├── package-lock.json               # Lock file for npm dependencies
+│   ├── package.json                    # Backend dependencies and scripts
+│   └── src/                            # Backend source code
+│       ├── index.js                    # Application entry point
+│       ├── config/                     # Database and queue configuration
+│       │   ├── database.js             # Database connection setup
+│       │   └── queue.js                # Job queue configuration
+│       ├── middleware/                 # Express middleware
+│       │   └── validationMiddleware.js # Request validation middleware
+│       ├── models/                     # Sequelize database models
+│       │   └── Article.js              # Article model definition
+│       ├── routes/                     # API route definitions
+│       │   ├── articlesRoutes.js       # API routes for articles
+│       │   └── jobsRoutes.js           # API routes for jobs
+│       ├── services/                   # Business logic
+│       │   ├── articleJob.js           # Service for article-related jobs
+│       │   ├── articleService.js       # Service for article business logic
+│       │   ├── jobService.js           # Service for job business logic
+│       │   └── startupService.js       # Application startup service
+│       ├── utils/                      # Utility functions
+│       │   └── errorHandler.js         # Centralized error handling
+│       ├── validators/                 # Request data validation schemas
+│       │   └── articleValidator.js     # Validator for article data
+│       └── workers/                    # Background job workers
+│           └── articleWorker.js        # Worker for processing article generation jobs
+├── frontend/                           # React frontend application
+│   ├── .gitignore                      # Git ignore rules for frontend
+│   ├── Dockerfile                      # Dockerfile for the frontend service
+│   ├── nginx.conf                      # Nginx configuration for serving the frontend
+│   ├── package-lock.json               # Lock file for npm dependencies
+│   ├── package.json                    # Frontend dependencies and scripts
+│   └── src/                            # Frontend source code
+│       ├── App.css                     # Main application CSS
+│       ├── App.js                      # Main application component
+│       ├── index.css                   # Global styles
+│       ├── index.js                    # Entry point for the React application
+│       ├── api/                        # API client for interacting with the backend
+│       │   ├── articlesApi.js          # API calls for articles
+│       │   └── jobsApi.js              # API calls for jobs
+│       ├── assets/                     # Frontend specific assets
+│       ├── components/                 # Reusable React components
+│       │   ├── blogButton/             # Blog button component
+│       │   │   ├── BlogButton.css      # Styles for BlogButton
+│       │   │   └── BlogButton.jsx      # BlogButton React component
+│       │   ├── blogCard/               # Blog card component
+│       │   │   ├── BlogCard.css        # Styles for BlogCard
+│       │   │   └── BlogCard.jsx        # BlogCard React component
+│       │   ├── blogList/               # Blog list component
+│       │   │   ├── BlogList.css        # Styles for BlogList
+│       │   │   └── BlogList.jsx        # BlogList React component
+│       │   └── ui/                     # UI components
+│       │       ├── Spinner.css         # Styles for Spinner
+│       │       └── Spinner.jsx         # Spinner React component
+│       ├── lib/                        # Utility functions
+│       │   └── date.js                 # Date utility functions
+│       └── pages/                      # Page-level React components
+│           ├── 404/                    # 404 Not Found page
+│           │   ├── NotFound.css        # Styles for 404 page
+│           │   └── NotFound.jsx        # 404 Not Found React component
+│           ├── articleDetails/         # Article details page
+│           │   ├── ArticleDetail.css   # Styles for ArticleDetail page
+│           │   └── ArticleDetail.jsx   # ArticleDetail React component
+│           ├── home/                   # Home page
+│           │   ├── Home.css            # Styles for Home page
+│           │   └── Home.jsx            # Home page React component
+│           └── jobs/                   # Jobs page
+│               ├── Jobs.css            # Styles for Jobs page
+│               └── Jobs.jsx            # Jobs page React component
+├── docs/                               # Project documentation and assets
+│   └── assets/                         # Images and diagrams for documentation
+│       ├── architecture.md             # Architecture overview
+│       ├── home.png                    # Screenshot of the home page
+│       └── jobsBard.png                # Screenshot of the jobs board
+└── infra/                              # Infrastructure as Code (IaC) for deployment
+    ├── buildspec.yml                   # AWS CodeBuild specification
+    ├── docker-compose.yml              # Docker Compose for local development and deployment
+    └── scripts/                        # Deployment scripts
+        └── deploy.sh                   # Script for deploying to EC2
 ```
 
-## Features
+## [Application Architecture](./docs/assets/architecture.md)
 
-- View a list of articles
-- View a single article
-- Articles are automatically generated daily using an AI service
-- View the status of background jobs
+The application is composed of frontend backend database and infra
+- [Frontend README](./frontend/README.md) for details
+- [Backend README](./backend/README.md) for details
+- [Infra README](./Infra/README.md) for details
 
-## Tech Stack
-
-### Frontend
-
-- **React:**
-
-### Backend
-
-- **Node.js:** 
-- **Express:** 
-- **Sequelize:**  ORM for database
-- **PostgreSQL:**
-- **pg-boss:** A job queue, uses PostgreSQL.
-- **@openrouter/ai-sdk-provider:** Ai services used for generating articles.
-- **@google/genai:** For blog images.
-
-
-- **Docker:** For containerizing the application.
-
-
-### Infrastructure
-
-- **AWS EC2:** The application is deployed on an EC2 instance.
-- **AWS CodeBuild:** Used for building the application.
-- **GitHub Actions:** For CI/CD.
-
-## Application Architecture
-
-The application is composed of three main components:
-
-- **Frontend:** A React application that provides the user interface for the blog. It communicates with the backend via a REST API.
-- **Backend:** A Node.js application that provides the REST API for the frontend. It uses a PostgreSQL database for data storage and a job queue for background processing.
-
-## Frontend Pages
-
-The frontend application has the following pages:
-
-- **Home (`/`):** Displays a list of articles.
-- **Article Details (`/article/:id`):** Displays a single article.
-- **Jobs (`/jobs`):** Displays the status of background jobs.
-- **Not Found (`/404`):** A 404 page.
 
 ## Screenshots
 
@@ -113,7 +143,7 @@ The frontend application has the following pages:
 
 ## Getting Started / Local Development With Dockers
 
-To get started with local development, you will need to have Docker and Docker Compose installed.
+To get started with local development, you will need to have Docker and Docker Compose installed, Node 20 or lstest, postgreSQL 16 or latest pdAdmin recomenred but not required, openrouter ali key,and gemeni api key.
 
 1.  **Clone the repository:**
 
@@ -178,5 +208,5 @@ The workflow consists of the following steps:
 - Retries, dead letter queues, rate limiting
 - S3 + CloudFront for images (vs local disk)
 - Sharp.js optimization + multiple sizes
-- CDN global delivery
+- implement SSL/TLS encryption for secure HTTPS acce
 - Local AI - Fine-tuned Model
