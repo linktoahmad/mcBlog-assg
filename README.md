@@ -130,7 +130,7 @@ This is a full-stack blog application with a React frontend, a Node.js backend, 
 The application is composed of frontend backend database and infra
 - [Frontend README](./frontend/README.md) for details
 - [Backend README](./backend/README.md) for details
-- [Infra README](./Infra/README.md) for details
+- [Infra README](./infra/README.md) for details
 
 
 ## Screenshots
