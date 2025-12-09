@@ -167,3 +167,16 @@ The workflow consists of the following steps:
 1.  **Configure AWS Credentials:** Configures the AWS credentials using secrets stored in GitHub.
 2.  **Trigger AWS CodeBuild:** Triggers an AWS CodeBuild project to build the Docker images for the frontend and backend and push them to Amazon ECR.
 3.  **Deploy to EC2:** SSH into the EC2 instance and runs the `deploy.sh` script located in the `infra/scripts` directory. This script pulls the latest Docker images from ECR and restarts the Docker containers.
+
+### TODO / Imporvements
+- TailwindCSS + shadcn/ui component library
+- Dark mode & responsive design
+- PWA support
+- Sentry.io error tracking (frontend + backend)
+- BullMQ + Redis (replace pgBoss)
+- Visual and intractive job dashboard (/admin/queues)
+- Retries, dead letter queues, rate limiting
+- S3 + CloudFront for images (vs local disk)
+- Sharp.js optimization + multiple sizes
+- CDN global delivery
+- Local AI - Fine-tuned Model
