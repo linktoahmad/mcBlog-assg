@@ -118,6 +118,7 @@ To get started with local development, you will need to have Docker and Docker C
 1.  **Clone the repository:**
 
     ```bash
+    git clone -b main REPO_URL_HERE
     cd your-repository
     ```
 
@@ -142,7 +143,7 @@ To get started with local development, you will need to have Docker and Docker C
 2.  **Create a `.env` file in the `frontend` directory with the following content:**
 
     ```
-   REACT_APP_API_URL=
+    REACT_APP_API_URL=
     ```
 3.  **Run the application using npm :**
 - for backend install packages and run command
