@@ -80,14 +80,6 @@ This is a full-stack blog application with a React frontend, a Node.js backend, 
 
 - **Docker:** For containerizing the application.
 
-### Local Setup
-
-- Clone the repo
-
-```
-cd ./infra/ 
-docker compose up --build
-```
 
 ### Infrastructure
 
@@ -119,18 +111,27 @@ The frontend application has the following pages:
 ### Jobs Board
 ![Jobs Board](docs/assets/jobsBard.png)
 
-## Getting Started / Local Development
+## Getting Started / Local Development With Dockers
 
 To get started with local development, you will need to have Docker and Docker Compose installed.
 
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/your-repository.git
     cd your-repository
     ```
 
-2.  **Create a `.env` file in the `backend` directory with the following content:**
+2.  **Run the application using Docker Compose:**
+
+    ```bash
+    cd infra
+    docker compose up --build
+    ```
+
+
+##  Local Development Without Dockers
+
+1.  **Create a `.env` file in the `backend` directory with the following content:**
 
     ```
     DATABASE_URL=
@@ -138,14 +139,22 @@ To get started with local development, you will need to have Docker and Docker C
     OPENROUTER=
     GEMINI_API_KEY=
     ```
+2.  **Create a `.env` file in the `frontend` directory with the following content:**
 
-3.  **Run the application using Docker Compose:**
-
-    ```bash
-    cd infra
-    docker compose up --build
     ```
-
+   REACT_APP_API_URL=
+    ```
+3.  **Run the application using npm :**
+- for backend install packages and run command
+    ```bash
+    npm i
+    npm run dev 
+    ```
+    - for forntend nstall packages and run command
+    ```bash
+    npm i
+    npm start 
+    ```
 The frontend will be available at `http://localhost:3000` and the backend at `http://localhost:3001`.
 
 ## Deployment / CI/CD
