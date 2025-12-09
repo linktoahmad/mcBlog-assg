@@ -44,7 +44,7 @@ const BlogList = () => {
                 dataLength={articles.length}
                 next={() => fetchArticles()}
                 hasMore={hasMore}
-                loader={<Spinner />}
+                loader={<div style={{ paddingTop: articles.length ? '30px' : '100vh' }}><Spinner /></div>}
                 endMessage={
                     <div className='section-footer'>
                         <b>Yay! You have seen it all</b>
