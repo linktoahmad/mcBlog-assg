@@ -26,7 +26,7 @@ This will start the services in the foreground. To run them in the background, u
 docker-compose up -d
 ```
 
-### ASCII Diagram (Local)
+### Diagram (Local)
 
 ```
 +-----------------------------------+
@@ -81,11 +81,69 @@ The `scripts/deploy.sh` script is run on the EC2 instance to deploy the applicat
 7. Starts the backend container.
 8. Starts the frontend container.
 
-### ASCII Diagram (Deployment)
+### Diagram (Deployment)
 
 ```
+        ----------Workflow-------------
+┌───────────────────────────────────────────┐
+│                 GitHub Repo               │
+│   (Developer commits & pushes to main)    │
+└───────────────────┬───────────────────-───┘
+                    │
+                    │ Step 1: Push code update
+                    ▼
+        ┌───────────┴──────────────-──┐
+        │        GitHub Actions       │
+        │         build.yml           │
+        ├─────────────────────────────┤
+        │ Step 2: Configure AWS creds │
+        │ Step 3: Trigger CodeBuild   │
+        │    → aws-actions run build  │
+        │ (GitHub waits for result)   │
+        └───────────┬─────────────-───┘
+                    │
+                    │ Step 4: CodeBuild job starts
+                    ▼
+        ┌───────────┴──────────────-────┐
+        │          CodeBuild            │
+        │        Build + Push stage     │
+        ├───────────────────────────────┤
+        │ a) Login to ECR               │
+        │ b) Build Frontend image       │
+        │    with API URL env injected  │
+        │ c) Tag + Push FE -> ECR       │
+        │ d) Build Backend image        │
+        │ e) Tag + Push BE -> ECR       │
+        │ f) Finish build successfully  │
+        └───────────┬───────────────-───┘
+                    │
+                    │ Step 5: Notify GitHub build done
+                    ▼
+        ┌───────────┴──────────────────-──┐
+        │      GitHub Actions resumes     │
+        ├─────────────────────────────────┤
+        │ Step 6: SSH into EC2 instance   │
+        │   via appleboy/ssh-action       │
+        │ Step 7: Execute deploy.sh       │
+        └───────────┬────────────────-────┘
+                    │
+                    ▼
+┌─────────────-─────┴───────────────────────┐
+│                  EC2 Host                 │
+│           Docker Deployment Stage         │
+├───────────────────────────────────────────┤
+│ Step 8: Pull latest FE/BE images from ECR │
+│ Step 9: Stop existing containers          │
+│ Step 10: Run new containers               │
+│ Step 11: Verify services running          │
+│   - Frontend :3000                        │
+│   - Backend :3001                         │
+│   - PostgreSQL with persistent volume     │
+└───────────────────────────────────────────┘
+
+
 +--------------------------------------------------------------------------------------+
-|                                     AWS Cloud                                      |
+|                                     AWS Cloud                                        |
 |                                                                                      |
 |  +-----------------+      +----------------------+      +-------------------------+  |
 |  |                 |      |                      |      |                         |  |

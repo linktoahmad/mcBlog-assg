@@ -19,42 +19,104 @@ The application is a full-stack blog platform composed of a React frontend and a
 ## Architecture Diagram Overview
 
 ```ascii
-
-┌────────────────────────────────────────────────────────────┐
-│                        AWS EC2 (t2.micro)                  │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐  │
-│  │   Frontend   │    │   Backend    │    │  PostgreSQL  │  │
-│  │  React App   │◄──►│  Node.js API │◄──►│   blogdb     │  │
-│  │   :3000      │    │ + node-cron  │    │  articles    │  │
-│  │              │    │   :3001      │    │              │  │
-│  └──────────────┘    └──────────────┘    └──────────────┘  │
-│           ▲                               ▲                │
-│           │                               │                │
-│  ┌────────┼────────┐              ┌───────┼──────────────┤ │
-│  │ docker │ docker │              │ docker│ docker volume│ │
-│  │ run    │ run    │              │ run   │ postgres_data│ │
-│  └────────┼────────┘              └───────┼──────────────┘ │
-│          │                                │                │
-└──────────┼─────────────────────-──────────┼────────────────┘
-           │                                │
-    ┌────-─▼───────┐              ┌────--───▼──────┐
-    │   deploy.sh  │              │     ECR        │
-    │  Script      │◄────────────▶│   Repositories │
-    │              │              │  mcblog-fe/be  │
-    └──────────────┘              └───────┬────────┘
-                                          │
-                                 ┌────────▼────────┐
-                                 │   CodeBuild     │
-                                 │   Pipeline      │
-                                 │  buildspec.yml  │
-                                 └────────┬────────┘
-                                          │
-                                 ┌────────▼────────┐
-                                 │   GitHub Repo   │
-                                 │ yourusername/   │
-                                 │   auto-blog     │
-                                 └──────────────-──┘
+                        ┌─────────────────────────────┐
+                        │        GitHub Repo          │
+                        │     > git hub actions       │
+                        └───────────────┬─────────────┘
+                                        │  (push events trigger build)
+                                        ▼
+                                        │
+                         ┌──────────────┴──────────────┐
+                         │        AWS CodeBuild        │
+                         │      + buildspec.yml        │
+                         └──────────────┬──────────────┘
+                                        │ (docker build)
+                                        ▼ (push images)
+                         ┌──────────────┴──────────────┐
+                         │         AWS ECR             │
+                         │  mcblog-fe  |  mcblog-be    │
+                         └──────────────┬──────────────┘
+                                        │ (docker pull)
+                                        ▼
+                    ┌───────────────────┴──────────────────┐
+                    │          AWS EC2 (t3.micro)          │
+                    │              Docker Host             │
+                    │                                      │
+     ┌──────────────┴─────────-────┐            ┌──────────┴───────────┐
+     │       Frontend              │            │       Backend        │
+     │     React App :3000         │◄──────────►│ Node.js API :3001    │
+     │  Container (Docker)         │            │ + node-cron          │
+     └─────────────────────────────┘            └─────────-─▲──────────┘
+                                                            │
+                                                            │
+                                                ┌───────────┴───────────┐
+                                                │     PostgreSQL DB     │
+                                                │  blogdb :5432         │
+                                                │ Docker + Volume       │
+                                                │ postgres_data         │
+                                                └───────────────────────┘
 ``` 
+
+## Infra Workflow Diagram 
+
+```ascii
+┌───────────────────────────────────────────┐
+│                 GitHub Repo               │
+│   (Developer commits & pushes to main)    │
+└───────────────────┬───────────────────-───┘
+                    │
+                    │ Step 1: Push code update
+                    ▼
+        ┌───────────┴──────────────-──┐
+        │        GitHub Actions       │
+        │         build.yml           │
+        ├─────────────────────────────┤
+        │ Step 2: Configure AWS creds │
+        │ Step 3: Trigger CodeBuild   │
+        │    → aws-actions run build  │
+        │ (GitHub waits for result)   │
+        └───────────┬─────────────-───┘
+                    │
+                    │ Step 4: CodeBuild job starts
+                    ▼
+        ┌───────────┴──────────────-────┐
+        │          CodeBuild            │
+        │        Build + Push stage     │
+        ├───────────────────────────────┤
+        │ a) Login to ECR               │
+        │ b) Build Frontend image       │
+        │    with API URL env injected  │
+        │ c) Tag + Push FE -> ECR       │
+        │ d) Build Backend image        │
+        │ e) Tag + Push BE -> ECR       │
+        │ f) Finish build successfully  │
+        └───────────┬───────────────-───┘
+                    │
+                    │ Step 5: Notify GitHub build done
+                    ▼
+        ┌───────────┴──────────────────-──┐
+        │      GitHub Actions resumes     │
+        ├─────────────────────────────────┤
+        │ Step 6: SSH into EC2 instance   │
+        │   via appleboy/ssh-action       │
+        │ Step 7: Execute deploy.sh       │
+        └───────────┬────────────────-────┘
+                    │
+                    ▼
+┌─────────────-─────┴───────────────────────┐
+│                  EC2 Host                 │
+│           Docker Deployment Stage         │
+├───────────────────────────────────────────┤
+│ Step 8: Pull latest FE/BE images from ECR │
+│ Step 9: Stop existing containers          │
+│ Step 10: Run new containers               │
+│ Step 11: Verify services running          │
+│   - Frontend :3000                        │
+│   - Backend :3001                         │
+│   - PostgreSQL with persistent volume     │
+└───────────────────────────────────────────┘
+
+```
 
 ## Architecture Diagram 
 
